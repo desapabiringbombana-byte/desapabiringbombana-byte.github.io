@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Informasi Geografis & Profil Resmi Desa Pabiring</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --sidebar-width: 290px;
+            --primary: #1b4332;
+            --secondary: #b08968;
+            --accent: #0077b6;
+            --persik-red: #dc2626;
+            --dark: #0b090a;
+            --bg: #f8f9fa;
+            --text-main: #2b2d42;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text-main); scroll-behavior: smooth; overflow-x: hidden; }
+
+        /* --- SIDEBAR --- */
+        .sidebar { width: var(--sidebar-width); height: 100vh; background: var(--dark); color: white; position: fixed; padding: 2.5rem 1.5rem; display: flex; flex-direction: column; z-index: 1000; transition: 0.4s; }
+        .sidebar-brand { display: flex; align-items: center; gap: 15px; margin-bottom: 2.5rem; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .logo-bombana { width: 50px; height: auto; }
+        .brand-text h2 { font-size: 1.2rem; font-weight: 700; margin: 0; line-height: 1.1; letter-spacing: 0.5px; }
+
+        .nav-menu { list-style: none; flex-grow: 1; overflow-y: auto; }
+        .nav-item { margin-bottom: 0.5rem; }
+        .nav-link { text-decoration: none; color: #adb5bd; padding: 12px 18px; display: block; border-radius: 12px; transition: 0.3s; margin-bottom: 8px; font-size: 0.95rem; }
+        .nav-link:hover, .nav-link.active { background: rgba(255, 255, 255, 0.1); color: white; box-shadow: inset 4px 0 0 var(--secondary); }
+
+        /* --- MOBILE HEADER --- */
+        .mobile-header { display: none; position: fixed; top: 0; width: 100%; background: var(--dark); color: white; padding: 15px 25px; z-index: 1100; justify-content: space-between; align-items: center; }
+        .menu-btn { background: none; border: none; color: white; font-size: 1.8rem; cursor: pointer; }
+
+        /* --- MAIN CONTENT --- */
+        .main-content { margin-left: var(--sidebar-width); padding: 50px; transition: 0.4s; }
+        .section-card { background: white; border-radius: 25px; padding: 45px; margin-bottom: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.02); border: 1px solid #edf2f4; }
+        .section-header { border-left: 6px solid var(--primary); padding-left: 20px; margin-bottom: 30px; }
+        .section-header h2 { font-size: 1.8rem; color: var(--dark); }
+
+        .work-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin: 30px 0; }
+        .work-card { padding: 35px; border-radius: 20px; color: white; }
+        .work-tani { background: linear-gradient(145deg, #2d6a4f, #1b4332); }
+        .work-nelayan { background: linear-gradient(145deg, #0077b6, #023e8a); }
+        
+        .club-box { background: #fff; border: 2px solid #e2e8f0; padding: 30px; border-radius: 20px; border-top: 6px solid #dc2626; margin-top: 20px; }
+        .club-title { font-size: 1.5rem; font-weight: 700; color: #dc2626; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
+        .club-logo { width: 100px; height: auto; margin-bottom: 15px; }
+
+        .image-frame { width: 100%; border-radius: 20px; overflow: hidden; border: 1px solid #e2e8f0; margin: 25px 0; background: #f1f5f9; }
+        .responsive-img { width: 100%; height: auto; display: block; transition: 0.6s; }
+        .responsive-img:hover { transform: scale(1.02); }
+        
+        .map-wrapper { width: 100%; height: 450px; border-radius: 20px; overflow: hidden; border: 1px solid #e2e8f0; }
+        .map-wrapper iframe { width: 100%; height: 100%; border: none; }
+
+        .text-narrative { text-align: justify; line-height: 1.9; margin-bottom: 20px; font-size: 1.05rem; color: #4a4e69; }
+
+        .data-table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 0.9rem; }
+        .data-table th, .data-table td { border: 1px solid #e2e8f0; padding: 12px; text-align: left; }
+        .data-table th { background-color: #f8f9fa; color: var(--primary); }
+
+        @media (max-width: 992px) {
+            .sidebar { left: -100%; width: 280px; }
+            .sidebar.active { left: 0; }
+            .mobile-header { display: flex; }
+            .main-content { margin-left: 0; padding: 100px 20px 30px 20px; }
+            .work-grid { grid-template-columns: 1fr; }
+            .section-card { padding: 30px 20px; }
+            .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 999; backdrop-filter: blur(4px); }
+            .overlay.active { display: block; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+    <header class="mobile-header">
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <img src="assets/img/Lambang_Kabupaten_Bombana.png" style="height: 35px;">
+            <span style="font-weight: 700; font-size: 1rem;">DESA PABIRING</span>
+        </div>
+        <button class="menu-btn" onclick="toggleMenu()">☰</button>
+    </header>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <img src="assets/img/Lambang_Kabupaten_Bombana.png" alt="Logo" class="logo-bombana">
+            <div class="brand-text">
+                <h2 style="color: white;">DESA</h2>
+                <h2 style="color: var(--secondary);">PABIRING</h2>
+            </div>
+        </div>
+        
+        <nav class="nav-menu">
+            <li class="nav-item"><a href="#beranda" class="nav-link active" onclick="toggleMenu()">Beranda</a></li>
+            <li class="nav-item"><a href="#sejarah" class="nav-link" onclick="toggleMenu()">Profil & Geografis</a></li>
+            <li class="nav-item"><a href="#pekerjaan" class="nav-link" onclick="toggleMenu()">Sektor Ekonomi</a></li>
+            <li class="nav-item"><a href="#olahraga" class="nav-link" onclick="toggleMenu()">Olahraga & Pemuda</a></li>
+            <li class="nav-item"><a href="#wisata" class="nav-link" onclick="toggleMenu()">Potensi Wisata</a></li>
+            <li class="nav-item"><a href="#peta-pemukiman" class="nav-link" onclick="toggleMenu()">Pemetaan Pemukiman</a></li>
+            <li class="nav-item"><a href="#peta-kebun" class="nav-link" onclick="toggleMenu()">Pemetaan Perkebunan</a></li>
+            <li class="nav-item"><a href="#google-maps" class="nav-link" onclick="toggleMenu()">Peta Lokasi</a></li>
+            <li class="nav-item"><a href="#kontak" class="nav-link" onclick="toggleMenu()">Hubungi Kami</a></li>
+        </nav>
+        
+        <div style="font-size: 0.75rem; color: #6c757d; text-align: center; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px;">
+            Pemerintah Desa Pabiring<br>Kabupaten Bombana
+        </div>
+    </aside>
+
+    <main class="main-content">
+        
+        <header id="beranda" class="section-card" style="background: linear-gradient(135deg, var(--primary) 0%, #386641 100%); color: white; text-align: center;">
+            <h1 style="font-size: 2.2rem; margin-bottom: 15px;">Sistem Informasi Digital Desa Pabiring</h1>
+            <p style="font-size: 1.1rem; opacity: 0.9;">Integrasi Data Geospasial dan Profil Wilayah Poleang Barat, Kabupaten Bombana.</p>
+        </header>
+
+        <section id="sejarah" class="section-card">
+            <div class="section-header"><h2>Profil Wilayah & Geografis</h2></div>
+            <p class="text-narrative">
+                Desa Pabiring merupakan satuan wilayah administratif yang terletak di Kecamatan Poleang Barat, Kabupaten Bombana, Provinsi Sulawesi Tenggara. Secara yuridis, pembentukan desa ini dikukuhkan melalui Peraturan Daerah Nomor 6 Tahun 2007. Secara geografis, wilayah Desa Pabiring memiliki karakteristik yang unik karena memadukan bentang alam dataran rendah yang subur untuk sektor perkebunan dengan garis pantai Teluk Bone yang kaya akan sumber daya maritim.
+            </p>
+            <p class="text-narrative">
+                Secara etimologi, nama "Pabiring" berakar dari kata dalam bahasa lokal "Biring" yang merujuk pada makna tepian atau pinggiran. Hal ini merefleksikan posisi desa yang berada di pesisir pantai, yang secara historis menjadi titik penting bagi aktivitas sosial dan ekonomi masyarakat setempat. Dengan luas wilayah administratif sebesar ± 12,45 Km², Desa Pabiring menaungi populasi penduduk yang dinamis dan rukun.
+            </p>
+            
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Parameter Data Wilayah</th>
+                        <th>Rincian Informasi Resmi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>Provinsi / Kabupaten / Kecamatan</td><td>Sulawesi Tenggara / Bombana / Poleang Barat</td></tr>
+                    <tr><td>Status Pembentukan Desa</td><td>Definitif (Berdasarkan Perda No. 6 Tahun 2007)</td></tr>
+                    <tr><td>Estimasi Jumlah Penduduk (2024/2025)</td><td>± 1.150 Jiwa</td></tr>
+                    <tr><td>Karakteristik Topografi</td><td>Dataran Rendah, Kawasan Pesisir, dan Perbukitan</td></tr>
+                    <tr><td>Jumlah Dusun Utama</td><td>5 Dusun (Tantahi, Kessie, Taruseng, Pabiring 1, Pabiring 2)</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section id="pekerjaan" class="section-card">
+            <div class="section-header"><h2>Struktur Ekonomi & Ketahanan Pangan</h2></div>
+            <p class="text-narrative">
+                Pilar utama perekonomian masyarakat Desa Pabiring bersumber dari pengelolaan sumber daya alam yang berkelanjutan. Terdapat dua sektor fundamental yang menjadi motor penggerak ekonomi desa:
+            </p>
+            <div class="work-grid">
+                <div class="work-card work-tani" style="background: linear-gradient(145deg, #1e4d2b, #1b4332);">
+                    <h3>Sektor Perkebunan Unggulan</h3>
+                    <p>Desa Pabiring dikenal sebagai salah satu sentra penghasil Jambu Mete dan Kelapa di wilayah Poleang Barat. Kualitas tanah yang subur mendukung produktivitas hasil kebun yang memiliki nilai jual kompetitif di pasar regional maupun nasional.</p>
+                </div>
+                <div class="work-card work-nelayan" style="background: linear-gradient(145deg, #075985, #0c4a6e);">
+                    <h3>Sektor Maritim & Perikanan</h3>
+                    <p>Pemanfaatan kekayaan laut di pesisir pantai menjadi identitas ekonomi bagi warga pesisir. Profesi nelayan berperan krusial dalam menyuplai ketersediaan protein laut segar bagi pemenuhan pangan internal maupun daerah sekitar.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="olahraga" class="section-card">
+            <div class="section-header"><h2>Pusat Pembinaan Olahraga & Kepemudaan</h2></div>
+            <p class="text-narrative">
+                Sektor kepemudaan di Desa Pabiring dipandang sebagai aset pembangunan desa di masa depan. Fokus utama pembinaan difokuskan pada cabang olahraga sepak bola sebagai sarana untuk membangun sportivitas, disiplin, dan penguatan hubungan emosional antarwarga.
+            </p>
+            
+            <div class="club-box">
+                <div class="club-title">Manajemen Persik Kessie & SSB PERSIK</div>
+                <img src="assets/img/persiklogo.png" alt="Logo Persik Kessie" class="club-logo">
+
+                <h4 style="color: var(--persik-red); margin-bottom: 10px;">Persik Kessie: Representasi Prestasi Desa</h4>
+                <p class="text-narrative">
+                    Persatuan Sepakbola Indonesia Kessie (Persik) merupakan klub utama yang membawa panji kebanggaan Desa Pabiring dalam berbagai turnamen di tingkat kabupaten. Klub ini menjadi wadah bagi atlet senior untuk menunjukkan kemampuan kompetitif dan semangat juang di lapangan hijau.
+                </p>
+
+                <h4 style="color: var(--primary); margin-bottom: 10px;">SSB PERSIK: Pusat Pengembangan Bakat Usia Dini</h4>
+                <p class="text-narrative">
+                    Sebagai bagian dari sistem regenerasi, Sekolah Sepak Bola (SSB) PERSIK didirikan untuk mengidentifikasi dan melatih talenta muda sejak dini. Didukung penuh oleh mitra strategis lokal UD. TWO SONS, SSB ini berkomitmen melahirkan bibit pemain berkualitas dengan pelatihan fisik dan taktik yang terorganisir.
+                </p>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                    <div class="image-frame"><img src="assets/img/SSBPERSIK.jpeg" class="responsive-img"></div>
+                    <div class="image-frame"><img src="assets/img/SSBPERSIK1.jpeg" class="responsive-img"></div>
+                    <div class="image-frame"><img src="assets/img/SSBPERSIK2.jpeg" class="responsive-img"></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="wisata" class="section-card">
+            <div class="section-header"><h2>Daya Tarik Ekowisata Alam</h2></div>
+            <h3 style="color: var(--accent); margin-bottom: 15px;">Air Terjun Wae Manrung'e</h3>
+            <p class="text-narrative">
+                Desa Pabiring memiliki potensi ekowisata tersembunyi berupa Air Terjun Wae Manrung'e. Terletak di kawasan hutan tropis yang asri, destinasi ini menawarkan panorama air terjun alami dengan kejernihan air murni dari perbukitan. Pelestarian kawasan ini menjadi prioritas masyarakat desa guna menjaga keseimbangan ekosistem dan daya tarik wisata alam di Kabupaten Bombana.
+            </p>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                <div class="image-frame"><img src="assets/img/WAEMENRUNG'E.jpeg" class="responsive-img"></div>
+                <div class="image-frame"><img src="assets/img/WAEMENRUNG'E3.jpeg" class="responsive-img"></div>
+            </div>
+        </section>
+
+        <section id="peta-pemukiman" class="section-card">
+            <div class="section-header"><h2>Sistem Pemetaan Pemukiman Digital</h2></div>
+            <p class="text-narrative">
+                Implementasi sistem informasi spasial menyajikan data sebaran hunian penduduk di lima dusun. Informasi ini digunakan oleh pemerintah desa sebagai landasan dalam perencanaan infrastruktur, penataan sanitasi, dan optimalisasi distribusi pelayanan publik agar lebih merata.
+            </p>
+            <div class="image-frame">
+                <img src="assets/img/petapemukiman.png" alt="Visualisasi Peta Pemukiman" class="responsive-img">
+            </div>
+        </section>
+
+        <section id="peta-kebun" class="section-card">
+            <div class="section-header"><h2>Analisis Spasial Potensi Agraria</h2></div>
+            <p class="text-narrative">
+                Pemetaan zonasi perkebunan komoditas Kelapa dan Jambu Mete dilakukan secara digital untuk mendukung strategi ekonomi desa. Melalui integrasi data ini, pemantauan produktivitas lahan dapat dilakukan secara lebih akurat dan terencana.
+            </p>
+            <div class="image-frame">
+                <img src="assets/img/petakebun.png" alt="Visualisasi Peta Potensi Kebun" class="responsive-img">
+            </div>
+        </section>
+
+        <section id="google-maps" class="section-card">
+            <div class="section-header"><h2>Integrasi Navigasi Lokasi Global</h2></div>
+            <div class="map-wrapper">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15918.473528243468!2d121.5714902!3d-4.4323214!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2d96bc8945c5d557%3A0xbe65db04fd96913f!2sPabiring%2C%20Kec.%20Poleang%20Bar.%2C%20Kabupaten%20Bombana%2C%20Sulawesi%20Tenggara!5e0!3m2!1sid!2sid!4v1710000000000" allowfullscreen="" loading="lazy"></iframe>
+            </div>
+        </section>
+
+        <section id="kontak" class="section-card">
+            <div class="section-header"><h2>Kanal Informasi Resmi</h2></div>
+            <p class="text-narrative">Pemerintah Desa Pabiring terbuka terhadap koordinasi terkait pembangunan wilayah, kunjungan wisata, dan kerja sama kemitraan.</p>
+            <p><strong>Lokasi Kantor:</strong> Desa Pabiring, Kecamatan Poleang Barat, Kabupaten Bombana, Sulawesi Tenggara.</p>
+            <p><strong>Media Sosial:</strong> Instagram: @desa_pabiring</p>
+        </section>
+    </main>
+
+    <script>
+        function toggleMenu() {
+            if (window.innerWidth <= 992) {
+                document.getElementById('sidebar').classList.toggle('active');
+                document.getElementById('overlay').classList.toggle('active');
+            }
+        }
+
+        const sections = document.querySelectorAll('section');
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                if (pageYOffset >= (section.offsetTop - 200)) {
+                    current = section.getAttribute('id');
+                }
+            });
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href').includes(current)) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
